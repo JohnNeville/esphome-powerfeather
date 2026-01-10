@@ -80,8 +80,6 @@ async def to_code(config):
     mainboard = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(mainboard, config)
 
-    cg.add_library(name="PowerFeather-SDK", version="^1.1.1")
-
     if battery_capacity_config := config.get(CONF_BATTERY_CAPACITY):
         cg.add(mainboard.set_battery_capacity(battery_capacity_config))
     if battery_type_config := config.get(CONF_BATTERY_TYPE):

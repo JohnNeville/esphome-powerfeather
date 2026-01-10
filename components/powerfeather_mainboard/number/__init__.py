@@ -4,6 +4,7 @@ from esphome.components import number
 from esphome.const import (
     DEVICE_CLASS_VOLTAGE,
     DEVICE_CLASS_CURRENT,
+    ENTITY_CATEGORY_CONFIG
 )
 from .. import (
     ICON_VOLTAGE,
@@ -35,13 +36,15 @@ CONFIG_SCHEMA = POWERFEATHER_MAINBOARD_COMPONENT_SCHEMA.extend(
             PowerFeatherValue,
             icon=ICON_VOLTAGE,
             unit_of_measurement=UNIT_MILLIVOLT,
-            device_class=DEVICE_CLASS_VOLTAGE
+            device_class=DEVICE_CLASS_VOLTAGE,
+            entity_category=ENTITY_CATEGORY_CONFIG 
         ),
         cv.Optional(CONF_BATTERY_CHARGING_MAX_CURRENT_VALUE): number.number_schema(
             PowerFeatherValue,
             icon=ICON_CURRENT_DC,
             unit_of_measurement=UNIT_MILLIAMPERE,
-            device_class=DEVICE_CLASS_CURRENT
+            device_class=DEVICE_CLASS_CURRENT,
+            entity_category=ENTITY_CATEGORY_CONFIG 
         ),
     })
 

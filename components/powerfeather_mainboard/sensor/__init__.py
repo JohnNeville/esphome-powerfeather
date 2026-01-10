@@ -15,7 +15,8 @@ from esphome.const import (
     DEVICE_CLASS_DURATION,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_BATTERY,
-    STATE_CLASS_MEASUREMENT
+    STATE_CLASS_MEASUREMENT,
+    ENTITY_CATEGORY_DIAGNOSTIC
 )
 from .. import (
     ICON_VOLTAGE,
@@ -44,52 +45,61 @@ CONFIG_SCHEMA = POWERFEATHER_MAINBOARD_COMPONENT_SCHEMA.extend(
             unit_of_measurement=UNIT_MILLIVOLT,
             icon=ICON_VOLTAGE,
             device_class=DEVICE_CLASS_VOLTAGE,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT
         ),
         cv.Optional(CONF_SUPPLY_CURRENT_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_MILLIAMPERE,
             icon=ICON_CURRENT_DC,
             device_class=DEVICE_CLASS_CURRENT,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT
         ),
         cv.Optional(CONF_BATTERY_VOLTAGE_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_MILLIVOLT,
             icon=ICON_VOLTAGE,
             device_class=DEVICE_CLASS_VOLTAGE,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT
         ),
         cv.Optional(CONF_BATTERY_CURRENT_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_MILLIAMPERE,
             icon=ICON_CURRENT_DC,
             device_class=DEVICE_CLASS_CURRENT,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT
         ),
         cv.Optional(CONF_BATTERY_CHARGE_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_PERCENT,
             icon=ICON_BATTERY,
             device_class=DEVICE_CLASS_BATTERY,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT
         ),
         cv.Optional(CONF_BATTERY_HEALTH_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_PERCENT,
             icon=ICON_PERCENT,
-            state_class=STATE_CLASS_MEASUREMENT
+            state_class=STATE_CLASS_MEASUREMENT,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
         ),
         cv.Optional(CONF_BATTERY_CYCLES_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_EMPTY,
             icon=ICON_EMPTY,
-            state_class=STATE_CLASS_MEASUREMENT
+            state_class=STATE_CLASS_MEASUREMENT,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC
         ),
         cv.Optional(CONF_BATTERY_TIME_LEFT_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_MINUTES,
             icon=ICON_TIMER,
             device_class=DEVICE_CLASS_DURATION,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT
         ),
         cv.Optional(CONF_BATTERY_TEMPERATURE_SENSOR): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
             icon=ICON_THERMOMETER,
             device_class=DEVICE_CLASS_TEMPERATURE,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT
         ),
     }

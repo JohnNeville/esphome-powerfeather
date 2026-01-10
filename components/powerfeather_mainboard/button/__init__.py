@@ -5,7 +5,8 @@ from esphome.components import button
 from esphome.const import(
     ICON_RESTART,
     DEVICE_CLASS_RESTART,
-
+    ENTITY_CATEGORY_CONFIG,
+    ENTITY_CATEGORY_DIAGNOSTIC
 )
 from .. import (
     CONF_POWERFEATHER_MAINBOARD_ID,
@@ -22,12 +23,15 @@ PowerFeatherButton = powerfeather_ns.class_("PowerFeatherButton", button.Button,
 
 CONFIG_SCHEMA = POWERFEATHER_MAINBOARD_COMPONENT_SCHEMA.extend(
     {
-        cv.Optional(CONF_SHIP_MODE_BUTTON): button.button_schema(PowerFeatherButton),
-        cv.Optional(CONF_SHUTDOWN_BUTTON): button.button_schema(PowerFeatherButton),
+        cv.Optional(CONF_SHIP_MODE_BUTTON): button.button_schema(PowerFeatherButton,
+            entity_category=ENTITY_CATEGORY_CONFIG ),
+        cv.Optional(CONF_SHUTDOWN_BUTTON): button.button_schema(PowerFeatherButton,
+            entity_category=ENTITY_CATEGORY_CONFIG ),
         cv.Optional(CONF_POWER_CYCLE_BUTTON): button.button_schema(
             PowerFeatherButton,
             icon=ICON_RESTART,
             device_class=DEVICE_CLASS_RESTART,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC
         ),
     }
 )
