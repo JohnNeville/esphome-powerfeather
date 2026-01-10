@@ -26,7 +26,7 @@ CONFIG_SCHEMA = POWERFEATHER_MAINBOARD_COMPONENT_SCHEMA.extend(
         cv.Optional(CONF_SHIP_MODE_BUTTON): button.button_schema(PowerFeatherButton,
             entity_category=ENTITY_CATEGORY_CONFIG ),
         cv.Optional(CONF_SHUTDOWN_BUTTON): button.button_schema(PowerFeatherButton,
-            entity_category=ENTITY_CATEGORY_CONFIG ),
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC ),
         cv.Optional(CONF_POWER_CYCLE_BUTTON): button.button_schema(
             PowerFeatherButton,
             icon=ICON_RESTART,
