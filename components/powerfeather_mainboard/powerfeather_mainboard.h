@@ -61,6 +61,10 @@ namespace esphome
     class PowerFeatherMainboard : public PollingComponent
     {
     public:
+      // Override the priority to initialize closer to when switches and other similar device are created. 
+      float get_setup_priority() const override { 
+        return esphome::setup_priority::HARDWARE; 
+      }
       void setup() override;
       void loop() override;
       void update() override;
