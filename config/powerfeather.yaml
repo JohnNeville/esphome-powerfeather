@@ -31,15 +31,28 @@ external_components:
       path: ../components
     refresh: 0s
 
+# ── Core board (GPIO switches, shared FreeRTOS task) ────────────────────────
 powerfeather_mainboard:
+  id: my_powerfeather
   battery_capacity: 1000
   battery_type: "Generic_3V7"
-  id: "my_powerfeather"
-  update_interval: 5s # applies to all types of sensor under this component
 
+# ── BQ2562x charger ─────────────────────────────────────────────────────────
+powerfeather_charger:
+  id: my_charger
+  mainboard_id: my_powerfeather
+  update_interval: 5s
+
+# ── LC709204F fuel gauge ─────────────────────────────────────────────────────
+powerfeather_fuel_gauge:
+  id: my_fuel_gauge
+  mainboard_id: my_powerfeather
+  update_interval: 5s
+
+# ── Sensors ──────────────────────────────────────────────────────────────────
 sensor:
-  - platform: "powerfeather_mainboard"
-    mainboard_id: "my_powerfeather"
+  - platform: powerfeather_charger
+    charger_id: my_charger
     supply_voltage:
       name: "Supply Voltage"
     supply_current:
@@ -48,6 +61,9 @@ sensor:
       name: "Battery Voltage"
     battery_current:
       name: "Battery Current"
+
+  - platform: powerfeather_fuel_gauge
+    fuel_gauge_id: my_fuel_gauge
     battery_charge:
       name: "Battery Charge"
     battery_health:
@@ -59,15 +75,17 @@ sensor:
     battery_temperature:
       name: "Battery Temperature"
 
+# ── Binary sensors ───────────────────────────────────────────────────────────
 binary_sensor:
-  - platform: "powerfeather_mainboard"
-    mainboard_id: "my_powerfeather"
+  - platform: powerfeather_charger
+    charger_id: my_charger
     supply_good:
       name: "Supply Good"
 
+# ── Buttons ──────────────────────────────────────────────────────────────────
 button:
-  - platform: "powerfeather_mainboard"
-    mainboard_id: "my_powerfeather"
+  - platform: powerfeather_charger
+    charger_id: my_charger
     ship_mode:
       name: "Ship Mode"
     shutdown:
@@ -75,29 +93,42 @@ button:
     powercycle:
       name: "Powercycle"
 
+# ── Numbers ──────────────────────────────────────────────────────────────────
 number:
-  - platform: "powerfeather_mainboard"
-    mainboard_id: "my_powerfeather"
+  - platform: powerfeather_charger
+    charger_id: my_charger
     supply_maintain_voltage:
       name: "Supply Maintain Voltage"
     battery_charging_max_current:
       name: "Battery Charging Max Current"
 
+# ── Switches ─────────────────────────────────────────────────────────────────
 switch:
-  - platform: "powerfeather_mainboard"
-    mainboard_id: "my_powerfeather"
+  # Mainboard GPIO switches — always available, no I2C dependency
+  - platform: powerfeather_mainboard
+    mainboard_id: my_powerfeather
     enable_3V3:
       name: "Enable 3V3"
     enable_VSQT:
       name: "Enable VSQT"
+    enable_EN:
+      name: "Enable EN"
+
+  # Charger switches — only active if BQ2562x initialised successfully
+  - platform: powerfeather_charger
+    charger_id: my_charger
     enable_battery_temp_sense:
       name: "Enable Battery Temperature Sense"
     enable_battery_charging:
       name: "Enable Battery Charging"
-    enable_battery_fuel_gauge:
-      name: "Enable Battery Fuel Gauge"
     enable_stat:
       name: "Enable STAT LED"
+
+  # Fuel gauge switch — only active if LC709204F initialised successfully
+  - platform: powerfeather_fuel_gauge
+    fuel_gauge_id: my_fuel_gauge
+    enable_battery_fuel_gauge:
+      name: "Enable Battery Fuel Gauge"
 
 
 web_server:

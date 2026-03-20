@@ -1,13 +1,10 @@
 #pragma once
 
 #include "esphome/core/component.h"
-#include "esphome/components/sensor/sensor.h"
-#include "esphome/components/binary_sensor/binary_sensor.h"
-#include "esphome/components/number/number.h"
 #include "esphome/components/switch/switch.h"
-#include "esphome/components/button/button.h"
 
 #include <PowerFeather.h>
+#include <vector>
 
 namespace esphome
 {
@@ -20,14 +17,17 @@ namespace esphome
       UR18650ZY,
     };
 
-   enum TaskUpdateType
+    enum TaskUpdateType
     {
-      SENSORS = 0,
+      // Sensor pre-fetch triggers (sent by each subcomponent's loop())
+      CHARGER_SENSORS = 0,
+      FUEL_GAUGE_SENSORS,
+      // Mainboard GPIO updates
       ENABLE_EN,
       ENABLE_3V3,
       ENABLE_VSQT,
+      // BQ2562x charger control
       ENABLE_BATTERY_TEMP_SENSE,
-      ENABLE_BATTERY_FUEL_GAUGE,
       ENABLE_BATTERY_CHARGING,
       ENABLE_STAT,
       POWERCYCLE,
@@ -35,6 +35,8 @@ namespace esphome
       SHUTDOWN,
       SUPPLY_MAINTAIN_VOLTAGE,
       BATTERY_CHARGING_MAX_CURRENT,
+      // LC709204F fuel gauge control
+      ENABLE_BATTERY_FUEL_GAUGE,
     };
 
     typedef struct
@@ -56,6 +58,17 @@ namespace esphome
       void set_update_type(TaskUpdateType type) { type_ = type; }
     protected:
       TaskUpdateType type_;
+    };
+
+    // Abstract interface that charger and fuel gauge subcomponents implement.
+    // The shared FreeRTOS task in PowerFeatherMainboard calls into each
+    // registered subcomponent so that all I2C traffic is serialized.
+    class PowerFeatherSubcomponent
+    {
+    public:
+      virtual ~PowerFeatherSubcomponent() = default;
+      virtual void update_sensors() = 0;
+      virtual void handle_update(const TaskUpdate &update) = 0;
     };
 
     class PowerFeatherMainboard : public PollingComponent
@@ -83,92 +96,46 @@ namespace esphome
           break;
         }
       }
-      void set_supply_voltage_sensor(sensor::Sensor *sensor) { supply_voltage_sensor_ = sensor; }
-      void set_supply_current_sensor(sensor::Sensor *sensor) { supply_current_sensor_ = sensor; }
-      void set_supply_good_sensor(binary_sensor::BinarySensor *sensor) { supply_good_sensor_ = sensor; }
-      void set_battery_voltage_sensor(sensor::Sensor *sensor) { battery_voltage_sensor_ = sensor; }
-      void set_battery_current_sensor(sensor::Sensor *sensor) { battery_current_sensor_ = sensor; }
-      void set_battery_charge_sensor(sensor::Sensor *sensor) { battery_charge_sensor_ = sensor; }
-      void set_battery_health_sensor(sensor::Sensor *sensor) { battery_health_sensor_ = sensor; }
-      void set_battery_cycles_sensor(sensor::Sensor *sensor) { battery_cycles_sensor_ = sensor; }
-      void set_battery_time_left_sensor(sensor::Sensor *sensor) { battery_time_left_sensor_ = sensor; }
-      void set_battery_temperature_sensor(sensor::Sensor *sensor) { battery_temperature_sensor_ = sensor; }
 
+      // GPIO switches (always available regardless of charger/fuel gauge state)
       void set_enable_3V3_switch(switch_::Switch *sw) { enable_3V3_switch_ = sw; }
       void set_enable_VSQT_switch(switch_::Switch *sw) { enable_VSQT_switch_ = sw; }
       void set_enable_EN_switch(switch_::Switch *sw) { enable_EN_switch_ = sw; }
-      void set_enable_battery_charging_switch(switch_::Switch *sw) { enable_battery_charging_switch_ = sw; }
-      void set_enable_battery_temp_sense_switch(switch_::Switch *sw) { enable_battery_temp_sense_switch_ = sw; }
-      void set_enable_battery_fuel_gauge_switch(switch_::Switch *sw) { enable_battery_fuel_gauge_switch_ = sw; }
-      void set_enable_stat_switch(switch_::Switch *sw) { enable_stat_switch_ = sw; }
 
-      void set_ship_mode_button(button::Button *button) { ship_mode_button_ = button; }
-      void set_shutdown_button(button::Button *button) { shutdown_button_ = button; }
-      void set_powercycle_button(button::Button *button) { powercycle_button_ = button; }
+      // Subcomponent registration — called by charger/fuel gauge during their setup()
+      // if (and only if) their own initialisation succeeds.
+      void register_subcomponent(PowerFeatherSubcomponent *subcomp);
 
-      void set_supply_maintain_voltage_value(number::Number *value) { supply_maintain_voltage_value_ = value; }
-      void set_battery_charging_max_current_value(number::Number *value) { battery_charging_max_current_value_ = value; }
+      // Returns true if Board.init() succeeded.  Charger and fuel gauge components
+      // check this before doing any I2C work so their setup() can fail gracefully.
+      bool is_board_ready() const { return board_ready_; }
 
       void send_task_update(TaskUpdate update);
 
     private:
       static const size_t UPDATE_TASK_STACK_SIZE_ = 3192;
       static const size_t UPDATE_TASK_QUEUE_SIZE_ = 10;
-      static const uint32_t UPDATE_TASK_SENSOR_UPDATE_MS_ = 150;
 
-      int32_t battery_capacity_;
-      PowerFeather::Mainboard::BatteryType battery_type_;
+      int32_t battery_capacity_ = 0;
+      PowerFeather::Mainboard::BatteryType battery_type_ = PowerFeather::Mainboard::BatteryType::Generic_3V7;
 
-      bool supply_good_;
-      bool enable_EN_;
-      bool enable_3V3_;
-      bool enable_VSQT_;
-      bool enable_battery_charging_;
-      bool enable_battery_temp_sense_;
-      bool enable_battery_fuel_gauge_;
-      bool enable_stat_;
-      float supply_voltage_;
-      float supply_current_;
-      float battery_voltage_;
-      float battery_current_;
-      float battery_charge_;
-      float battery_health_;
-      float battery_cycles_;
-      float battery_time_left_;
-      float battery_temperature_;
-      float battery_charging_max_current_;
-      float supply_maintain_voltage_;
+      bool board_ready_ = false;
+      bool enable_EN_ = false;
+      bool enable_3V3_ = false;
+      bool enable_VSQT_ = false;
 
       QueueHandle_t update_task_queue_ = NULL;
 
-      switch_::Switch *enable_EN_switch_;
-      switch_::Switch *enable_3V3_switch_;
-      switch_::Switch *enable_VSQT_switch_;
-      switch_::Switch *enable_battery_temp_sense_switch_;
-      switch_::Switch *enable_battery_charging_switch_;
-      switch_::Switch *enable_battery_fuel_gauge_switch_;
-      switch_::Switch *enable_stat_switch_;
-      binary_sensor::BinarySensor *supply_good_sensor_;
-      sensor::Sensor *supply_voltage_sensor_;
-      sensor::Sensor *supply_current_sensor_;
-      sensor::Sensor *battery_voltage_sensor_;
-      sensor::Sensor *battery_current_sensor_;
-      sensor::Sensor *battery_charge_sensor_;
-      sensor::Sensor *battery_health_sensor_;
-      sensor::Sensor *battery_cycles_sensor_;
-      sensor::Sensor *battery_time_left_sensor_;
-      sensor::Sensor *battery_temperature_sensor_;
-      button::Button *ship_mode_button_;
-      button::Button *shutdown_button_;
-      button::Button *powercycle_button_;
-      number::Number *supply_maintain_voltage_value_;
-      number::Number *battery_charging_max_current_value_;
+      switch_::Switch *enable_EN_switch_ = nullptr;
+      switch_::Switch *enable_3V3_switch_ = nullptr;
+      switch_::Switch *enable_VSQT_switch_ = nullptr;
+
+      std::vector<PowerFeatherSubcomponent *> subcomponents_;
 
       static void update_task_(void *param);
-      void update_sensors_();
 
-      uint32_t sensors_publish_time_ = 0;
-      bool sensors_updated_ = false;
+      void setup_mainboard_();
+      void handle_mainboard_update_(const TaskUpdate &update);
     };
-  } // namespace empty_compound_sensor
+  } // namespace powerfeather_mainboard
 } // namespace esphome

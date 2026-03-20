@@ -11,7 +11,7 @@ UNIT_MILLIVOLT = "mV"
 UNIT_MINUTES = "min"
 
 CODEOWNERS = ["powerfeatherdev (dev@powerfeather.dev)"]
-AUTO_LOAD = ["sensor", "binary_sensor", "switch", "button", "number"]
+AUTO_LOAD = ["switch"]
 
 CONF_POWERFEATHER_MAINBOARD_ID = "mainboard_id"
 
@@ -22,7 +22,7 @@ PowerFeatherMainboard = powerfeather_ns.class_(
 
 UPDATE_INTERVAL_MINIMUM = "500ms"
 
-# Definitions from SDK, needs to be duplicated here
+# Definitions from SDK — must be kept in sync with the SDK enum
 BATTERY_CAPACITY_MINIMUM = 50
 BatteryType = powerfeather_ns.enum("BatteryType")
 BATTERY_TYPES = {
@@ -31,25 +31,19 @@ BATTERY_TYPES = {
     "UR18650ZY" : BatteryType.UR18650ZY
 }
 
+# Shared TaskUpdateType enum — exported so charger/fuel gauge can reference it
 TaskUpdateType = powerfeather_ns.enum("TaskUpdateType")
 TASK_UPDATE_TYPES = {
-    "ENABLE_EN" : TaskUpdateType.ENABLE_EN,
-    "ENABLE_3V3" : TaskUpdateType.ENABLE_3V3,
-    "ENABLE_VSQT" : TaskUpdateType.ENABLE_VSQT,
-    "ENABLE_BATTERY_TEMP_SENSE" : TaskUpdateType.ENABLE_BATTERY_TEMP_SENSE,
-    "ENABLE_BATTERY_FUEL_GAUGE" : TaskUpdateType.ENABLE_BATTERY_FUEL_GAUGE,
-    "ENABLE_BATTERY_CHARGING" : TaskUpdateType.ENABLE_BATTERY_CHARGING,
-    "ENABLE_STAT" : TaskUpdateType.ENABLE_STAT,
-    "SHIP_MODE" : TaskUpdateType.SHIP_MODE,
-    "SHUTDOWN" : TaskUpdateType.SHUTDOWN,
-    "POWERCYCLE" : TaskUpdateType.POWERCYCLE,
-    "SUPPLY_MAINTAIN_VOLTAGE" : TaskUpdateType.SUPPLY_MAINTAIN_VOLTAGE,
-    "BATTERY_CHARGING_MAX_CURRENT" : TaskUpdateType.BATTERY_CHARGING_MAX_CURRENT,
+    "ENABLE_EN"    : TaskUpdateType.ENABLE_EN,
+    "ENABLE_3V3"   : TaskUpdateType.ENABLE_3V3,
+    "ENABLE_VSQT"  : TaskUpdateType.ENABLE_VSQT,
 }
 
 CONF_BATTERY_CAPACITY = "battery_capacity"
 CONF_BATTERY_TYPE = "battery_type"
 
+# Schema fragment used by powerfeather_mainboard sub-platform __init__.py files
+# (e.g. switch/) to reference the parent mainboard component.
 POWERFEATHER_MAINBOARD_COMPONENT_SCHEMA = cv.Schema(
     {
         cv.Required(CONF_POWERFEATHER_MAINBOARD_ID): cv.use_id(PowerFeatherMainboard),
@@ -67,12 +61,12 @@ def validate_update_interval(value):
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(PowerFeatherMainboard),
-        cv.Optional(CONF_BATTERY_CAPACITY, default = 0): cv.Any(
+        cv.Optional(CONF_BATTERY_CAPACITY, default=0): cv.Any(
             cv.Range(min=BATTERY_CAPACITY_MINIMUM),
             cv.Range(max=0)
         ),
         cv.Optional(CONF_BATTERY_TYPE, "Generic_3V7"): cv.enum(BATTERY_TYPES),
-        cv.Optional(CONF_UPDATE_INTERVAL, "10s") : validate_update_interval
+        cv.Optional(CONF_UPDATE_INTERVAL, "10s"): validate_update_interval,
     }
 )
 
