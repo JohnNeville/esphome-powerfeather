@@ -95,6 +95,15 @@ namespace esphome
       if (battery_current_sensor_)
         if (PowerFeather::Board.getBatteryCurrent(c) == PowerFeather::Result::Ok)
           battery_current_ = static_cast<float>(c);
+
+      if (battery_temperature_sensor_)
+      {
+        float temperature = 0;
+        if (PowerFeather::Board.getBatteryTemperature(temperature) == PowerFeather::Result::Ok)
+          battery_temperature_ = temperature;
+        else
+          battery_temperature_ = NAN;
+      }
     }
 
     void PowerFeatherCharger::handle_update(const TaskUpdate &update)
@@ -153,7 +162,8 @@ namespace esphome
       if (supply_current_sensor_)  supply_current_sensor_->publish_state(supply_current_);
       if (supply_good_sensor_)     supply_good_sensor_->publish_state(supply_good_);
       if (battery_voltage_sensor_) battery_voltage_sensor_->publish_state(battery_voltage_);
-      if (battery_current_sensor_) battery_current_sensor_->publish_state(battery_current_);
+      if (battery_current_sensor_)     battery_current_sensor_->publish_state(battery_current_);
+      if (battery_temperature_sensor_) battery_temperature_sensor_->publish_state(battery_temperature_);
     }
 
     void PowerFeatherCharger::dump_config()

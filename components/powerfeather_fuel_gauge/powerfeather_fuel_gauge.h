@@ -25,6 +25,7 @@ namespace esphome
       void loop() override;
       void update() override;
       void dump_config() override;
+      float get_setup_priority() const override { return setup_priority::HARDWARE; }
 
       // PowerFeatherSubcomponent interface
       void update_sensors() override;
@@ -38,21 +39,19 @@ namespace esphome
 
       void set_enable_battery_fuel_gauge_switch(switch_::Switch *sw) { enable_battery_fuel_gauge_switch_ = sw; }
 
-      void set_battery_charge_sensor(sensor::Sensor *s)       { battery_charge_sensor_ = s; }
-      void set_battery_health_sensor(sensor::Sensor *s)       { battery_health_sensor_ = s; }
-      void set_battery_cycles_sensor(sensor::Sensor *s)       { battery_cycles_sensor_ = s; }
-      void set_battery_time_left_sensor(sensor::Sensor *s)    { battery_time_left_sensor_ = s; }
-      void set_battery_temperature_sensor(sensor::Sensor *s)  { battery_temperature_sensor_ = s; }
+      void set_battery_charge_sensor(sensor::Sensor *s)    { battery_charge_sensor_ = s; }
+      void set_battery_health_sensor(sensor::Sensor *s)    { battery_health_sensor_ = s; }
+      void set_battery_cycles_sensor(sensor::Sensor *s)    { battery_cycles_sensor_ = s; }
+      void set_battery_time_left_sensor(sensor::Sensor *s) { battery_time_left_sensor_ = s; }
 
     private:
       static const uint32_t SENSOR_PREFETCH_MS_ = 200;
 
       bool enable_battery_fuel_gauge_ = true;
-      float battery_charge_ = 0;
-      float battery_health_ = 0;
-      float battery_cycles_ = 0;
-      float battery_time_left_ = 0;
-      float battery_temperature_ = 0;
+      float battery_charge_ = NAN;
+      float battery_health_ = NAN;
+      float battery_cycles_ = NAN;
+      float battery_time_left_ = NAN;
 
       switch_::Switch *enable_battery_fuel_gauge_switch_ = nullptr;
 
@@ -60,7 +59,6 @@ namespace esphome
       sensor::Sensor *battery_health_sensor_ = nullptr;
       sensor::Sensor *battery_cycles_sensor_ = nullptr;
       sensor::Sensor *battery_time_left_sensor_ = nullptr;
-      sensor::Sensor *battery_temperature_sensor_ = nullptr;
 
       void publish_sensors_();
 

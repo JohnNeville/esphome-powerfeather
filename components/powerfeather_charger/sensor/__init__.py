@@ -2,8 +2,11 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import sensor
 from esphome.const import (
+    ICON_THERMOMETER,
+    UNIT_CELSIUS,
     DEVICE_CLASS_VOLTAGE,
     DEVICE_CLASS_CURRENT,
+    DEVICE_CLASS_TEMPERATURE,
     STATE_CLASS_MEASUREMENT,
     ENTITY_CATEGORY_DIAGNOSTIC,
 )
@@ -22,6 +25,7 @@ CONF_SUPPLY_VOLTAGE_SENSOR = "supply_voltage"
 CONF_SUPPLY_CURRENT_SENSOR = "supply_current"
 CONF_BATTERY_VOLTAGE_SENSOR = "battery_voltage"
 CONF_BATTERY_CURRENT_SENSOR = "battery_current"
+CONF_BATTERY_TEMPERATURE_SENSOR = "battery_temperature"
 
 CONFIG_SCHEMA = POWERFEATHER_CHARGER_COMPONENT_SCHEMA.extend(
     {
@@ -53,6 +57,13 @@ CONFIG_SCHEMA = POWERFEATHER_CHARGER_COMPONENT_SCHEMA.extend(
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
+        cv.Optional(CONF_BATTERY_TEMPERATURE_SENSOR): sensor.sensor_schema(
+            unit_of_measurement=UNIT_CELSIUS,
+            icon=ICON_THERMOMETER,
+            device_class=DEVICE_CLASS_TEMPERATURE,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+            state_class=STATE_CLASS_MEASUREMENT,
+        ),
     }
 )
 
@@ -72,4 +83,7 @@ async def to_code(config):
     if cfg := config.get(CONF_BATTERY_CURRENT_SENSOR):
         sens = await sensor.new_sensor(cfg)
         cg.add(charger.set_battery_current_sensor(sens))
+    if cfg := config.get(CONF_BATTERY_TEMPERATURE_SENSOR):
+        sens = await sensor.new_sensor(cfg)
+        cg.add(charger.set_battery_temperature_sensor(sens))
 

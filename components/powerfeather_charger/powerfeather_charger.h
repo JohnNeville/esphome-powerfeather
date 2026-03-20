@@ -29,6 +29,7 @@ namespace esphome
       void loop() override;
       void update() override;
       void dump_config() override;
+      float get_setup_priority() const override { return setup_priority::HARDWARE; }
 
       // PowerFeatherSubcomponent interface
       void update_sensors() override;
@@ -43,10 +44,11 @@ namespace esphome
 
       void set_battery_capacity(int32_t v) { battery_capacity_ = v; }
 
-      void set_supply_voltage_sensor(sensor::Sensor *s) { supply_voltage_sensor_ = s; }
-      void set_supply_current_sensor(sensor::Sensor *s) { supply_current_sensor_ = s; }
-      void set_battery_voltage_sensor(sensor::Sensor *s) { battery_voltage_sensor_ = s; }
-      void set_battery_current_sensor(sensor::Sensor *s) { battery_current_sensor_ = s; }
+      void set_supply_voltage_sensor(sensor::Sensor *s)      { supply_voltage_sensor_ = s; }
+      void set_supply_current_sensor(sensor::Sensor *s)      { supply_current_sensor_ = s; }
+      void set_battery_voltage_sensor(sensor::Sensor *s)     { battery_voltage_sensor_ = s; }
+      void set_battery_current_sensor(sensor::Sensor *s)     { battery_current_sensor_ = s; }
+      void set_battery_temperature_sensor(sensor::Sensor *s) { battery_temperature_sensor_ = s; }
       void set_supply_good_sensor(binary_sensor::BinarySensor *s) { supply_good_sensor_ = s; }
 
       void set_enable_stat_switch(switch_::Switch *sw) { enable_stat_switch_ = sw; }
@@ -73,6 +75,7 @@ namespace esphome
       float supply_current_ = 0;
       float battery_voltage_ = 0;
       float battery_current_ = 0;
+      float battery_temperature_ = NAN;
       float supply_maintain_voltage_ = 0;
       float battery_charging_max_current_ = 0;
 
@@ -81,6 +84,7 @@ namespace esphome
       sensor::Sensor *supply_current_sensor_ = nullptr;
       sensor::Sensor *battery_voltage_sensor_ = nullptr;
       sensor::Sensor *battery_current_sensor_ = nullptr;
+      sensor::Sensor *battery_temperature_sensor_ = nullptr;
 
       switch_::Switch *enable_stat_switch_ = nullptr;
       switch_::Switch *enable_battery_charging_switch_ = nullptr;

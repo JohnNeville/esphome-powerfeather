@@ -50,11 +50,21 @@ namespace esphome
 
     void PowerFeatherFuelGauge::update_sensors()
     {
-      // Called from FreeRTOS task — all I2C reads happen here
+      // Called from FreeRTOS task — all I2C reads happen here.
+      // If the fuel gauge is disabled, mark all cached values as NAN so that
+      // publish_sensors_() reports unknown to Home Assistant instead of stale zeros.
+      if (!enable_battery_fuel_gauge_)
+      {
+        battery_charge_ = NAN;
+        battery_health_ = NAN;
+        battery_cycles_ = NAN;
+        battery_time_left_ = NAN;
+        return;
+      }
+
       uint8_t  pct = 0;
       uint16_t u16 = 0;
       int      minutes = 0;
-      float    temperature = 0;
 
       if (battery_charge_sensor_)
         if (PowerFeather::Board.getBatteryCharge(pct) == PowerFeather::Result::Ok)
@@ -72,9 +82,6 @@ namespace esphome
         if (PowerFeather::Board.getBatteryTimeLeft(minutes) == PowerFeather::Result::Ok)
           battery_time_left_ = static_cast<float>(minutes);
 
-      if (battery_temperature_sensor_)
-        if (PowerFeather::Board.getBatteryTemperature(temperature) == PowerFeather::Result::Ok)
-          battery_temperature_ = temperature;
     }
 
     void PowerFeatherFuelGauge::handle_update(const TaskUpdate &update)
@@ -101,7 +108,6 @@ namespace esphome
       if (battery_health_sensor_)       battery_health_sensor_->publish_state(battery_health_);
       if (battery_cycles_sensor_)       battery_cycles_sensor_->publish_state(battery_cycles_);
       if (battery_time_left_sensor_)    battery_time_left_sensor_->publish_state(battery_time_left_);
-      if (battery_temperature_sensor_)  battery_temperature_sensor_->publish_state(battery_temperature_);
     }
 
     void PowerFeatherFuelGauge::dump_config()

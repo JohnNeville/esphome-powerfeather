@@ -61,6 +61,8 @@ sensor:
       name: "Battery Voltage"
     battery_current:
       name: "Battery Current"
+    battery_temperature:
+      name: "Battery Temperature"
 
   - platform: powerfeather_fuel_gauge
     fuel_gauge_id: my_fuel_gauge
@@ -72,8 +74,6 @@ sensor:
       name: "Battery Cycles"
     battery_time_left:
       name: "Battery Time Left"
-    battery_temperature:
-      name: "Battery Temperature"
 
 # ── Binary sensors ───────────────────────────────────────────────────────────
 binary_sensor:

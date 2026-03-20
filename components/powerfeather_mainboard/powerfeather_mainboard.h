@@ -78,6 +78,7 @@ namespace esphome
       void loop() override;
       void update() override;
       void dump_config() override;
+      float get_setup_priority() const override { return setup_priority::BUS; }
 
       void set_battery_capacity(int32_t battery_capacity) { battery_capacity_ = battery_capacity; }
       void set_battery_type(BatteryType battery_type)
