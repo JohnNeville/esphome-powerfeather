@@ -81,6 +81,8 @@ binary_sensor:
     charger_id: my_charger
     supply_good:
       name: "Supply Good"
+    supply_present:
+      name: "Supply Present"
 
 # ── Buttons ──────────────────────────────────────────────────────────────────
 button:

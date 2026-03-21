@@ -88,6 +88,13 @@ namespace esphome
         if (PowerFeather::Board.checkSupplyGood(good) == PowerFeather::Result::Ok)
           supply_good_ = good;
 
+      if (supply_present_sensor_)
+      {
+        PowerFeather::BQ2562x::VBUSStat vbus_stat = PowerFeather::BQ2562x::VBUSStat::None;
+        if (PowerFeather::Board.getCharger().getVBUSStat(vbus_stat))
+          supply_present_ = (vbus_stat == PowerFeather::BQ2562x::VBUSStat::Adapter);
+      }
+
       if (battery_voltage_sensor_)
         if (PowerFeather::Board.getBatteryVoltage(v) == PowerFeather::Result::Ok)
           battery_voltage_ = static_cast<float>(v);
@@ -161,6 +168,7 @@ namespace esphome
       if (supply_voltage_sensor_)  supply_voltage_sensor_->publish_state(supply_voltage_);
       if (supply_current_sensor_)  supply_current_sensor_->publish_state(supply_current_);
       if (supply_good_sensor_)     supply_good_sensor_->publish_state(supply_good_);
+      if (supply_present_sensor_)  supply_present_sensor_->publish_state(supply_present_);
       if (battery_voltage_sensor_) battery_voltage_sensor_->publish_state(battery_voltage_);
       if (battery_current_sensor_)     battery_current_sensor_->publish_state(battery_current_);
       if (battery_temperature_sensor_) battery_temperature_sensor_->publish_state(battery_temperature_);

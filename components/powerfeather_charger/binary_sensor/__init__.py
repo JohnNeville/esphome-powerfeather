@@ -11,10 +11,15 @@ from .. import (
 )
 
 CONF_SUPPLY_GOOD_SENSOR = "supply_good"
+CONF_SUPPLY_PRESENT_SENSOR = "supply_present"
 
 CONFIG_SCHEMA = POWERFEATHER_CHARGER_COMPONENT_SCHEMA.extend(
     {
         cv.Optional(CONF_SUPPLY_GOOD_SENSOR): binary_sensor.binary_sensor_schema(
+            device_class=DEVICE_CLASS_POWER,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        ),
+        cv.Optional(CONF_SUPPLY_PRESENT_SENSOR): binary_sensor.binary_sensor_schema(
             device_class=DEVICE_CLASS_POWER,
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
         ),
@@ -28,4 +33,7 @@ async def to_code(config):
     if cfg := config.get(CONF_SUPPLY_GOOD_SENSOR):
         sens = await binary_sensor.new_binary_sensor(cfg)
         cg.add(charger.set_supply_good_sensor(sens))
+    if cfg := config.get(CONF_SUPPLY_PRESENT_SENSOR):
+        sens = await binary_sensor.new_binary_sensor(cfg)
+        cg.add(charger.set_supply_present_sensor(sens))
 

@@ -49,7 +49,8 @@ namespace esphome
       void set_battery_voltage_sensor(sensor::Sensor *s)     { battery_voltage_sensor_ = s; }
       void set_battery_current_sensor(sensor::Sensor *s)     { battery_current_sensor_ = s; }
       void set_battery_temperature_sensor(sensor::Sensor *s) { battery_temperature_sensor_ = s; }
-      void set_supply_good_sensor(binary_sensor::BinarySensor *s) { supply_good_sensor_ = s; }
+      void set_supply_good_sensor(binary_sensor::BinarySensor *s)    { supply_good_sensor_ = s; }
+      void set_supply_present_sensor(binary_sensor::BinarySensor *s) { supply_present_sensor_ = s; }
 
       void set_enable_stat_switch(switch_::Switch *sw) { enable_stat_switch_ = sw; }
       void set_enable_battery_charging_switch(switch_::Switch *sw) { enable_battery_charging_switch_ = sw; }
@@ -68,6 +69,7 @@ namespace esphome
       int32_t battery_capacity_ = 0;
 
       bool supply_good_ = false;
+      bool supply_present_ = false;
       bool enable_stat_ = false;
       bool enable_battery_charging_ = false;
       bool enable_battery_temp_sense_ = false;
@@ -80,6 +82,7 @@ namespace esphome
       float battery_charging_max_current_ = 0;
 
       binary_sensor::BinarySensor *supply_good_sensor_ = nullptr;
+      binary_sensor::BinarySensor *supply_present_sensor_ = nullptr;
       sensor::Sensor *supply_voltage_sensor_ = nullptr;
       sensor::Sensor *supply_current_sensor_ = nullptr;
       sensor::Sensor *battery_voltage_sensor_ = nullptr;
