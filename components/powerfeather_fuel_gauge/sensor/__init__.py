@@ -23,6 +23,10 @@ CONF_BATTERY_CHARGE_SENSOR = "battery_charge"
 CONF_BATTERY_HEALTH_SENSOR = "battery_health"
 CONF_BATTERY_CYCLES_SENSOR = "battery_cycles"
 CONF_BATTERY_TIME_LEFT_SENSOR = "battery_time_left"
+CONF_BATTERY_STATUS_SENSOR = "battery_status"
+CONF_BATTERY_LOW_CHARGE_ALARM_SENSOR = "battery_low_charge_alarm"
+CONF_BATTERY_LOW_VOLTAGE_ALARM_SENSOR = "battery_low_voltage_alarm"
+CONF_BATTERY_HIGH_VOLTAGE_ALARM_SENSOR = "battery_high_voltage_alarm"
 
 CONFIG_SCHEMA = POWERFEATHER_FUEL_GAUGE_COMPONENT_SCHEMA.extend(
     {
@@ -52,6 +56,30 @@ CONFIG_SCHEMA = POWERFEATHER_FUEL_GAUGE_COMPONENT_SCHEMA.extend(
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
+        cv.Optional(CONF_BATTERY_STATUS_SENSOR): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:card-bulleted-settings-outline",
+            accuracy_decimals=0,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        ),
+        cv.Optional(CONF_BATTERY_LOW_CHARGE_ALARM_SENSOR): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:battery-alert-variant-outline",
+            accuracy_decimals=0,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        ),
+        cv.Optional(CONF_BATTERY_LOW_VOLTAGE_ALARM_SENSOR): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:flash-alert-outline",
+            accuracy_decimals=0,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        ),
+        cv.Optional(CONF_BATTERY_HIGH_VOLTAGE_ALARM_SENSOR): sensor.sensor_schema(
+            unit_of_measurement=UNIT_EMPTY,
+            icon="mdi:flash-triangle-outline",
+            accuracy_decimals=0,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        ),
     }
 )
 
@@ -71,5 +99,17 @@ async def to_code(config):
     if cfg := config.get(CONF_BATTERY_TIME_LEFT_SENSOR):
         sens = await sensor.new_sensor(cfg)
         cg.add(fuel_gauge.set_battery_time_left_sensor(sens))
+    if cfg := config.get(CONF_BATTERY_STATUS_SENSOR):
+        sens = await sensor.new_sensor(cfg)
+        cg.add(fuel_gauge.set_battery_status_sensor(sens))
+    if cfg := config.get(CONF_BATTERY_LOW_CHARGE_ALARM_SENSOR):
+        sens = await sensor.new_sensor(cfg)
+        cg.add(fuel_gauge.set_battery_low_charge_alarm_sensor(sens))
+    if cfg := config.get(CONF_BATTERY_LOW_VOLTAGE_ALARM_SENSOR):
+        sens = await sensor.new_sensor(cfg)
+        cg.add(fuel_gauge.set_battery_low_voltage_alarm_sensor(sens))
+    if cfg := config.get(CONF_BATTERY_HIGH_VOLTAGE_ALARM_SENSOR):
+        sens = await sensor.new_sensor(cfg)
+        cg.add(fuel_gauge.set_battery_high_voltage_alarm_sensor(sens))
 
 

@@ -59,12 +59,17 @@ namespace esphome
         battery_health_ = NAN;
         battery_cycles_ = NAN;
         battery_time_left_ = NAN;
+        battery_status_ = NAN;
+        battery_low_charge_alarm_ = NAN;
+        battery_low_voltage_alarm_ = NAN;
+        battery_high_voltage_alarm_ = NAN;
         return;
       }
 
       uint8_t  pct = 0;
       uint16_t u16 = 0;
       int      minutes = 0;
+      bool     alarm = false;
 
       if (battery_charge_sensor_)
         if (PowerFeather::Board.getBatteryCharge(pct) == PowerFeather::Result::Ok)
@@ -81,6 +86,22 @@ namespace esphome
       if (battery_time_left_sensor_)
         if (PowerFeather::Board.getBatteryTimeLeft(minutes) == PowerFeather::Result::Ok)
           battery_time_left_ = static_cast<float>(minutes);
+
+      if (battery_status_sensor_)
+        if (PowerFeather::Board.getBatteryFuelGaugeStatus(u16) == PowerFeather::Result::Ok)
+          battery_status_ = static_cast<float>(u16);
+
+      if (battery_low_charge_alarm_sensor_)
+        if (PowerFeather::Board.getBatteryLowChargeAlarm(alarm) == PowerFeather::Result::Ok)
+          battery_low_charge_alarm_ = alarm ? 1.0f : 0.0f;
+
+      if (battery_low_voltage_alarm_sensor_)
+        if (PowerFeather::Board.getBatteryLowVoltageAlarm(alarm) == PowerFeather::Result::Ok)
+          battery_low_voltage_alarm_ = alarm ? 1.0f : 0.0f;
+
+      if (battery_high_voltage_alarm_sensor_)
+        if (PowerFeather::Board.getBatteryHighVoltageAlarm(alarm) == PowerFeather::Result::Ok)
+          battery_high_voltage_alarm_ = alarm ? 1.0f : 0.0f;
 
     }
 
@@ -108,6 +129,10 @@ namespace esphome
       if (battery_health_sensor_)       battery_health_sensor_->publish_state(battery_health_);
       if (battery_cycles_sensor_)       battery_cycles_sensor_->publish_state(battery_cycles_);
       if (battery_time_left_sensor_)    battery_time_left_sensor_->publish_state(battery_time_left_);
+      if (battery_status_sensor_)       battery_status_sensor_->publish_state(battery_status_);
+      if (battery_low_charge_alarm_sensor_) battery_low_charge_alarm_sensor_->publish_state(battery_low_charge_alarm_);
+      if (battery_low_voltage_alarm_sensor_) battery_low_voltage_alarm_sensor_->publish_state(battery_low_voltage_alarm_);
+      if (battery_high_voltage_alarm_sensor_) battery_high_voltage_alarm_sensor_->publish_state(battery_high_voltage_alarm_);
     }
 
     void PowerFeatherFuelGauge::dump_config()
