@@ -71,7 +71,6 @@ namespace esphome
         battery_health_ = NAN;
         battery_cycles_ = NAN;
         battery_time_left_ = NAN;
-        battery_status_ = NAN;
         battery_low_charge_alarm_ = NAN;
         battery_low_voltage_alarm_ = NAN;
         battery_high_voltage_alarm_ = NAN;
