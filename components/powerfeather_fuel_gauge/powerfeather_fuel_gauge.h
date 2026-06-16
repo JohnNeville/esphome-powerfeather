@@ -1,8 +1,11 @@
 #pragma once
 
+#include <string>
+
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/switch/switch.h"
+#include "esphome/components/text_sensor/text_sensor.h"
 
 #include "../powerfeather_mainboard/powerfeather_mainboard.h"
 
@@ -39,6 +42,8 @@ namespace esphome
 
       void set_enable_battery_fuel_gauge_switch(switch_::Switch *sw) { enable_battery_fuel_gauge_switch_ = sw; }
 
+      void set_status_sensor(text_sensor::TextSensor *s) { status_sensor_ = s; }
+
       void set_battery_charge_sensor(sensor::Sensor *s)    { battery_charge_sensor_ = s; }
       void set_battery_health_sensor(sensor::Sensor *s)    { battery_health_sensor_ = s; }
       void set_battery_cycles_sensor(sensor::Sensor *s)    { battery_cycles_sensor_ = s; }
@@ -52,6 +57,8 @@ namespace esphome
       static const uint32_t SENSOR_PREFETCH_MS_ = 200;
 
       bool enable_battery_fuel_gauge_ = true;
+      std::string status_message_{"Initializing"};
+
       float battery_charge_ = NAN;
       float battery_health_ = NAN;
       float battery_cycles_ = NAN;
@@ -62,6 +69,7 @@ namespace esphome
       float battery_high_voltage_alarm_ = NAN;
 
       switch_::Switch *enable_battery_fuel_gauge_switch_ = nullptr;
+      text_sensor::TextSensor *status_sensor_ = nullptr;
 
       sensor::Sensor *battery_charge_sensor_ = nullptr;
       sensor::Sensor *battery_health_sensor_ = nullptr;

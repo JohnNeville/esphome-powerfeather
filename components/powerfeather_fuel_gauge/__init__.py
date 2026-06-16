@@ -8,7 +8,7 @@ from esphome.components.powerfeather_mainboard import (
 )
 
 CODEOWNERS = ["powerfeatherdev (dev@powerfeather.dev)"]
-AUTO_LOAD = ["sensor", "switch"]
+AUTO_LOAD = ["sensor", "switch", "text_sensor"]
 DEPENDENCIES = ["powerfeather_mainboard"]
 
 CONF_POWERFEATHER_FUEL_GAUGE_ID = "fuel_gauge_id"
