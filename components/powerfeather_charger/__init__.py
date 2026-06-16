@@ -64,6 +64,9 @@ async def to_code(config):
     charger = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(charger, config)
 
+    # This forces ESPHome/PlatformIO to pull the library for this component
+    cg.add_library("PowerFeather-SDK",None)
+
     mainboard = await cg.get_variable(config[CONF_POWERFEATHER_MAINBOARD_ID])
     cg.add(charger.set_parent(mainboard))
 

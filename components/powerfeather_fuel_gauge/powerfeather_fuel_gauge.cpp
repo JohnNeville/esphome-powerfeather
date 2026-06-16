@@ -120,10 +120,6 @@ namespace esphome
           check(r, "time_left");
       }
 
-      if (battery_status_sensor_)
-        if (check(PowerFeather::Board.getBatteryFuelGaugeStatus(u16), "status"))
-          battery_status_ = static_cast<float>(u16);
-
       if (battery_low_charge_alarm_sensor_)
         if (check(PowerFeather::Board.getBatteryLowChargeAlarm(alarm), "low_charge_alarm"))
           battery_low_charge_alarm_ = alarm ? 1.0f : 0.0f;
@@ -137,7 +133,12 @@ namespace esphome
           battery_high_voltage_alarm_ = alarm ? 1.0f : 0.0f;
 
       if (!any_error)
+      {
         status_message_ = "OK";
+        if (battery_low_charge_alarm_sensor_  && battery_low_charge_alarm_ > 0.5f)  status_message_ += " [low-charge-alarm]";
+        if (battery_low_voltage_alarm_sensor_ && battery_low_voltage_alarm_ > 0.5f) status_message_ += " [low-voltage-alarm]";
+        if (battery_high_voltage_alarm_sensor_&& battery_high_voltage_alarm_ > 0.5f)status_message_ += " [high-voltage-alarm]";
+      }
     }
 
     void PowerFeatherFuelGauge::handle_update(const TaskUpdate &update)
@@ -165,7 +166,6 @@ namespace esphome
       if (battery_health_sensor_)       battery_health_sensor_->publish_state(battery_health_);
       if (battery_cycles_sensor_)       battery_cycles_sensor_->publish_state(battery_cycles_);
       if (battery_time_left_sensor_)    battery_time_left_sensor_->publish_state(battery_time_left_);
-      if (battery_status_sensor_)       battery_status_sensor_->publish_state(battery_status_);
       if (battery_low_charge_alarm_sensor_) battery_low_charge_alarm_sensor_->publish_state(battery_low_charge_alarm_);
       if (battery_low_voltage_alarm_sensor_) battery_low_voltage_alarm_sensor_->publish_state(battery_low_voltage_alarm_);
       if (battery_high_voltage_alarm_sensor_) battery_high_voltage_alarm_sensor_->publish_state(battery_high_voltage_alarm_);

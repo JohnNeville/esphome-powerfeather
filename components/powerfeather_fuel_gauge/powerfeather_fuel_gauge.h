@@ -48,7 +48,6 @@ namespace esphome
       void set_battery_health_sensor(sensor::Sensor *s)    { battery_health_sensor_ = s; }
       void set_battery_cycles_sensor(sensor::Sensor *s)    { battery_cycles_sensor_ = s; }
       void set_battery_time_left_sensor(sensor::Sensor *s) { battery_time_left_sensor_ = s; }
-      void set_battery_status_sensor(sensor::Sensor *s) { battery_status_sensor_ = s; }
       void set_battery_low_charge_alarm_sensor(sensor::Sensor *s) { battery_low_charge_alarm_sensor_ = s; }
       void set_battery_low_voltage_alarm_sensor(sensor::Sensor *s) { battery_low_voltage_alarm_sensor_ = s; }
       void set_battery_high_voltage_alarm_sensor(sensor::Sensor *s) { battery_high_voltage_alarm_sensor_ = s; }
@@ -63,7 +62,6 @@ namespace esphome
       float battery_health_ = NAN;
       float battery_cycles_ = NAN;
       float battery_time_left_ = NAN;
-      float battery_status_ = NAN;
       float battery_low_charge_alarm_ = NAN;
       float battery_low_voltage_alarm_ = NAN;
       float battery_high_voltage_alarm_ = NAN;
@@ -75,7 +73,6 @@ namespace esphome
       sensor::Sensor *battery_health_sensor_ = nullptr;
       sensor::Sensor *battery_cycles_sensor_ = nullptr;
       sensor::Sensor *battery_time_left_sensor_ = nullptr;
-      sensor::Sensor *battery_status_sensor_ = nullptr;
       sensor::Sensor *battery_low_charge_alarm_sensor_ = nullptr;
       sensor::Sensor *battery_low_voltage_alarm_sensor_ = nullptr;
       sensor::Sensor *battery_high_voltage_alarm_sensor_ = nullptr;

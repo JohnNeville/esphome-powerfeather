@@ -57,6 +57,9 @@ async def to_code(config):
     fuel_gauge = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(fuel_gauge, config)
 
+    # This forces ESPHome/PlatformIO to pull the library for this component
+    cg.add_library("PowerFeather-SDK",None)
+
     mainboard = await cg.get_variable(config[CONF_POWERFEATHER_MAINBOARD_ID])
     cg.add(fuel_gauge.set_parent(mainboard))
 
